@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "w_capacitors") (type "KiCad") (uri "/Users/sid/Documents/KiCad/10.0/footprints/w_capacitors.pretty") (options "") (descr ""))
+)
