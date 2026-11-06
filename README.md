@@ -17,22 +17,22 @@
 
 ## Overview & Motivation
 
-The **PUDGALA 300** is an open-source, high-power-density synchronous buck converter developed with [HEX Aerospace](https://hexaerospace.in). It steps down wide-range DC voltages (nominal 36V–54V battery buses, 7S–14S LiPo / Li-ion packs) down to a tightly regulated **24.88V (25V / 24V bus compatible)** rail delivering **10A continuous (250W nominal)**, and has been bench-tested up to **12.5A continuous (~312W)** with peak efficiency exceeding **96%**.
+The **PUDGALA 300** is an open-source, high-power-density synchronous buck converter developed with [HEX Aerospace](https://hexaerospace.in). It steps down wide-range DC voltages (nominal 36V–54V battery buses, 7S–14S LiPo / Li-ion packs) down to a regulated **24.88V (25V / 24V compatible)** rail delivering **10A continuous (250W nominal)**, and has been bench-tested up to **12.5A continuous (~312W)** with peak efficiency exceeding **96%**.
 
 ### Field FPV Charging
 The primary motivation for this project was powering high-power FPV drone battery chargers directly from repurposed **13S electric scooter (E-scooter) battery packs** in the field.
 
-* **The Problem:** 13S Li-ion battery packs swing from **39.0V** (depleted) to **54.6V** (fully charged). However, most popular field chargers (such as ISDT, ToolkitRC, Hota, and SkyRC) have a maximum input voltage limit of **30.0V DC**. Connecting a 13S battery directly would instantly destroy the charger.
+* **The Problem:** 13S Li-ion battery packs swing from **39.0V** (empty) to **54.6V** (fully charged). However, most popular field chargers (such as ISDT, ToolkitRC, Hota, and SkyRC) have a maximum input voltage limit of **30.0V DC**. Connecting a 13S battery directly would instantly destroy the charger.
 * **The Solution:** The PUDGALA 300 steps down the 39V–54.6V input into a stable **24.88V** rail at up to **10A–12.5A (>300W)**. This allows pilots to rapidly parallel-charge multiple 4S and 6S drone packs in the field using salvaged e-mobility batteries.
 
 ---
 
 > [!CAUTION]
 > ### Critical Operational Notice: Anti-Spark Connectors & Inrush Caution
-> During early testing of the prototype, the board was connected to a high-voltage 13S battery (~54.6V) with an active load already plugged into the output. The raw XT60 connector sparked violently upon contact, and the severe inrush arc and inductive voltage spike ($L_{lead} \cdot \frac{di}{dt}$ resonance between cable inductance and ceramic input caps) exceeded the MOSFET breakdown rating, killing one of the switching FETs.
+> During early testing of the prototype, the board was connected to a high-voltage 13S battery (~54.6V) with an active load already plugged into the output. The raw XT60 connector sparked violently upon contact, and the severe inrush arc and inductive voltage spike exceeded the MOSFET breakdown rating, killing one of the switching FETs.
 >
 > **Mandatory Safe Operating Procedures:**
-> 1. **Always Use Anti-Spark Connectors:** When connecting $>30\text{V}$ sources (especially 13S / 48V–54.6V packs), use an anti-spark connector with a built-in pre-charge resistor (such as **XT90-S** or **XT60-S**) or an external pre-charge switch.
+> 1. **Always Use Anti-Spark Connectors:** When connecting sources above 30V (especially 13S / 48V–54.6V packs), use an anti-spark connector with a built-in pre-charge resistor (such as **XT90-S** or **XT60-S**) or an external pre-charge switch.
 > 2. **Power-On Sequence:** Always connect the battery input **first** with no output load connected. Confirm the output power indicator LED is on (verifying stable 24.88V regulation) **before** plugging in your charger.
 > 3. **Lead Length:** Keep input battery leads as short as possible to minimize parasitic wiring inductance.
 
@@ -42,12 +42,12 @@ The primary motivation for this project was powering high-power FPV drone batter
 
 | Parameter | Specification | Notes / Conditions |
 | :--- | :--- | :--- |
-| **Input Voltage ($V_{IN}$)** | **28.0V to 60.0V DC** | Designed for 13S E-scooter packs (39V–54.6V), 7S–14S LiPo, 36V/48V buses |
-| **Output Voltage ($V_{OUT}$)** | **24.88V nominal ($\approx 25\text{V}$)** | Calibrated via precision feedback divider ($301\text{ k}\Omega / 10\text{ k}\Omega$) |
-| **Continuous Output Current ($I_{OUT}$)** | **10.0 A (Nominal) / 12.5 A (Tested)** | 250W nominal; bench-tested to 312W continuous (requires active cooling) |
-| **Peak / Overcurrent Limit ($I_{OCP}$)** | **12.0 A peak** | Cycle-by-cycle limit ($V_{CS-TH} = 60\text{ mV} / 5\text{ m}\Omega$) with hiccup restart |
-| **Continuous Output Power ($P_{OUT}$)** | **250 W nominal (up to 312 W)** | High continuous power density in a pocket-sized 50×50 mm board |
-| **Switching Frequency ($f_{SW}$)** | **~1.0 MHz (966 kHz nominal)** | Programmed via $R_{RT} = 9.09\text{ k}\Omega$ |
+| **Input Voltage** | **28.0V to 60.0V DC** | Designed for 13S E-scooter packs (39V–54.6V), 7S–14S LiPo, 36V/48V buses |
+| **Output Voltage** | **24.88V nominal (~25V)** | Calibrated via precision feedback divider (301 kΩ / 10 kΩ) |
+| **Continuous Output Current** | **10.0 A (Nominal) / 12.5 A (Tested)** | 250W nominal; bench-tested to 312W continuous (requires active cooling) |
+| **Peak / Overcurrent Limit** | **12.0 A peak** | Cycle-by-cycle limit with automatic hiccup restart |
+| **Continuous Output Power** | **250 W nominal (up to 312 W)** | High continuous power density in a pocket-sized 50×50 mm board |
+| **Switching Frequency** | **~1.0 MHz (966 kHz nominal)** | Programmed via 9.09 kΩ resistor |
 | **Peak Efficiency** | **> 96%** | Typically 94.5%–96.2% across 36V–52V input range |
 | **PCB Dimensions** | **50.0 mm × 50.0 mm × 12.0 mm** | Low profile; horizontal bent-lead electrolytic capacitors |
 | **PCB Layer Stackup** | **6 Layers (1 oz / 35 µm Cu each)** | Solid internal GND reference planes on L2 & L5 |
@@ -107,94 +107,84 @@ flowchart LR
 
 ### 1. Primary Controller: Texas Instruments LM5149-Q1 (`U1`)
 The **LM5149-Q1** (`PLM5149QRGYRQ1`) is an AEC-Q100 qualified, 80V/100V-capable synchronous buck DC-DC controller designed for high-efficiency, low-EMI industrial and automotive applications.
-* **Dual-Random Spread Spectrum (DRSS):** Programmed via a **$40.2\text{ k}\Omega$** resistor ($R_2$) between `CNFG` and `AGND`. DRSS combines triangular frequency modulation with pseudorandom dithering to disperse EMI energy across a wide frequency band, slashing fundamental and harmonic emission peaks.
-* **Switching Frequency ($f_{SW} \approx 1\text{ MHz}$):** Programmed via a **$9.09\text{ k}\Omega$** 1% resistor ($R_1$) between `RT` and `AGND`:
-  $$f_{SW} \approx \frac{6 \times 10^7}{R_{RT}(\text{k}\Omega) + 53} = \frac{60000}{9.09 + 53} \approx 966\text{ kHz}$$
-  High-frequency operation enables using a compact $2.2\mu\text{H}$ inductor and tiny MLCCs while delivering fast transient response.
-* **PFM / Diode Emulation Mode:** The `PFM/SYNC` pin is tied directly to `VDDA`. Under light or no-load conditions, the controller automatically enters Pulse Frequency Modulation, preventing reverse inductor current and reducing standby battery drain.
-* **Differential Current Sense & Cycle-by-Cycle Limiting:** Connected to pins `ISNS+` (20) and `VOUT/ISNS-` (21). The internal $60\text{ mV}$ threshold triggers immediate high-side turn-off and initiates hiccup-mode timeout under short circuits.
-* **Internal Gate Drivers & VCC Regulator:** Integrated 5V VCC regulator bypassed with $2.2\mu\text{F}$ ceramic capacitor ($C_8$). Delivers robust peak drive currents with adaptive deadtime control to prevent shoot-through.
+* **Dual-Random Spread Spectrum (DRSS):** Programmed via a 40.2 kΩ resistor (`R2`) on the `CNFG` pin. DRSS modulates the switching frequency to spread out noise energy and lower peak EMI spikes.
+* **1.0 MHz Switching Frequency:** Set via a 9.09 kΩ resistor (`R1`) on the `RT` pin (~966 kHz nominal). Running at 1 MHz allows using a small 2.2 µH inductor and compact ceramic capacitors while keeping transient response fast.
+* **PFM / Light-Load Efficiency:** The `PFM/SYNC` pin is tied directly to `VDDA`. Under light or no-load conditions, the controller automatically enters diode emulation to reduce idle battery drain.
+* **Current Sensing & Protection:** Cycle-by-cycle current limiting using differential sense inputs (`ISNS+` and `VOUT/ISNS-`) across the shunt resistor, cutting off overcurrents at 12A with automatic hiccup restart under short circuits.
+* **Gate Drivers & Internal VCC:** Built-in 5V regulator with a 2.2 µF bypass capacitor (`C8`), providing strong gate drive currents and adaptive deadtime control to prevent shoot-through.
 
 ---
 
 ### 2. High-Side Power MOSFET: TI CSD19534Q5A (`Q1`)
 * **Package:** SON 5 mm × 6 mm (TDSON-8)
-* **Ratings:** $V_{DS} = 100\text{ V}$, $I_D = 44\text{ A}$ (continuous), $137\text{ A}$ (pulsed)
-* **$R_{DS(on)}$:** $10.3\text{ m}\Omega$ typical / $12.6\text{ m}\Omega$ max @ $V_{GS} = 10\text{ V}$
-* **Gate Charge ($Q_g$):** Ultra-low $13.8\text{ nC}$
-* **Selection Rationale:** At 1.0 MHz, high-side FET switching losses ($P_{SW} \propto f_{SW} \times V_{IN} \times I_{OUT} \times Q_g$) dominate over conduction losses. The CSD19534Q5A's low gate-drain capacitance ($C_{GD}$) and low total gate charge minimize switching losses.
+* **Key Ratings:** 100V, 44A continuous, 10.3 mΩ typical on-resistance
+* **Why this part:** Chosen for its ultra-low gate charge (13.8 nC). At a high 1.0 MHz switching frequency, low gate charge is critical to keep switching losses minimal.
 
 ---
 
 ### 3. Low-Side Synchronous Rectifier MOSFET: TI CSD19502Q5B (`Q2`)
 * **Package:** SON 5 mm × 6 mm (TDSON-8)
-* **Ratings:** $V_{DS} = 80\text{ V}$, $I_D = 138\text{ A}$ (silicon limited), $200\text{ A}$ (pulsed)
-* **$R_{DS(on)}$:** Ultra-low **$2.8\text{ m}\Omega$ typical / $3.4\text{ m}\Omega$ max** @ $V_{GS} = 10\text{ V}$
-* **Selection Rationale:** The low-side MOSFET conducts during the $(1 - D)$ freewheeling interval (~50% duty cycle). Conduction losses ($I_{RMS}^2 \times R_{DS(on)}$) dominate. With $2.8\text{ m}\Omega$ on-resistance, conduction loss at 10A is only $\approx 0.15\text{ W}$, keeping the low-side switch cool.
+* **Key Ratings:** 80V, 138A, ultra-low 2.8 mΩ typical on-resistance
+* **Why this part:** The low-side switch handles freewheeling current roughly 50% of the time. Its tiny 2.8 mΩ resistance keeps conduction heat minimal (~0.15W at 10A), allowing it to run cool without extra heatsinks.
 
 ---
 
 ### 4. Power Inductor: Chilisin BMRF00101040 (`L1`)
-* **Inductance:** $2.2\mu\text{H} \pm 20\%$
-* **Saturation Current ($I_{sat}$):** **20.0 A** (rated for $>1.6\times$ the maximum converter peak current)
-* **Shielding:** Shielded composite iron-powder construction eliminating radiated magnetic flux and EMI.
+* **Value:** 2.2 µH, 20A saturation current
+* **Why this part:** High 20A saturation rating provides clean headroom above the 12A peak limit. The fully shielded composite iron-powder core prevents radiated magnetic noise from interfering with nearby electronics.
 
 ---
 
 ### 5. Current Sense Shunt: 5 mΩ Metal Element 2512 (`R3`)
-* **Value:** $0.005\ \Omega\ (5\text{ m}\Omega)$, 1% tolerance, 2W/3W rating
-* **Current Limit Threshold ($I_{PEAK}$):**
-  $$I_{PEAK(CL)} = \frac{V_{CS-TH}}{R_{SENSE}} = \frac{60\text{ mV}}{5\text{ m}\Omega} = 12.0\text{ A}$$
-  With average $I_{OUT} = 10\text{ A}$ and inductor ripple $\Delta I_L \approx 3.5\text{A} - 4.5\text{A}$, the peak inductor current is $10 + \Delta I_L / 2 \approx 11.75\text{ A}$. The 12.0A threshold provides clean margin while clamping overloads.
-* **Kelvin 4-Wire Routing:** Instrumented with net-ties `NT1` and `NT2` providing true Kelvin differential sense traces directly into the LM5149-Q1.
+* **Value:** 5 mΩ (0.005 Ω), 1% tolerance, 2512 package
+* **Operation:** Senses output current directly. Paired with the controller's 60 mV threshold, it sets the cycle-by-cycle peak limit to 12.0A. Connected using 4-wire Kelvin traces (`NT1`, `NT2`) to avoid PCB trace resistance errors.
 
 ---
 
 ### 6. Protection Clamps: SMBJ60A & SMBJ28A TVS Diodes
-* **Input TVS (`D2` — SMBJ60A):** 600W peak pulse power dissipation, $60\text{ V}$ reverse standoff voltage ($V_{RWM}$). Clamps inductive spikes during battery connections.
-* **Output TVS (`D3` — SMBJ28A):** $28\text{ V}$ reverse standoff voltage, $31.1\text{ V}$ breakdown. Clamps transient overvoltages to prevent exceeding the 30V maximum input limit of downstream FPV chargers.
-* **Fuse Recommendation:** To guarantee complete protection against a catastrophic high-side FET failure, **always install an inline 15A fuse** (or use a battery with a short-circuit-protected BMS) on the battery input lead. If an overvoltage fault occurs, the TVS clamps the rail to ground and blows the fuse instantly, ensuring the charger never sees excessive voltage.
+* **Input TVS (`D2` — SMBJ60A):** 60V standoff voltage clamp that absorbs inductive voltage spikes when connecting or disconnecting the battery.
+* **Output TVS (`D3` — SMBJ28A):** 28V standoff voltage clamp that prevents the output from ever exceeding the 30V maximum input rating of downstream FPV chargers.
+* **Fuse Recommendation:** Always install an inline 15A fuse on the positive battery lead (or use a battery pack with a short-circuit-protected BMS). If an overvoltage fault occurs, the TVS clamps the rail to ground and blows the fuse instantly, ensuring the charger never sees excessive voltage.
 
 ---
 
-### 7. Hybrid Capacitive Filtering
-* **Input Stage:** Two $22\mu\text{F}$ 2220 MLCCs (`C1`, `C2`) handle high-frequency ripple. A $100\text{ nF}$ 0603 MLCC (`C14`) is placed directly across the high-side FET drain to ground. A $47\mu\text{F}$ electrolytic capacitor (`C9`, horizontal mount) damps supply line ringing.
-* **Output Stage:** Four $10\mu\text{F}$ 1210 MLCCs (`C4`, `C11`, `C12`, `C13`) yield $40\mu\text{F}$ of ultra-low ESR capacitance. A $220\mu\text{F}$ horizontal electrolytic (`C10`) provides bulk energy storage for step loads.
+### 7. Capacitor Filtering Network
+* **Input Bank:** Two 22 µF 2220 MLCCs (`C1`, `C2`) for high-frequency ripple, a 100 nF MLCC (`C14`) right at the high-side FET drain, and a 47 µF horizontal electrolytic (`C9`) to damp input line ringing.
+* **Output Bank:** Four 10 µF 1210 MLCCs (`C4`, `C11`, `C12`, `C13`) yielding 40 µF of ultra-low ESR capacitance for low voltage ripple, plus a 220 µF horizontal electrolytic (`C10`) for transient load response.
 
 ---
 
-## Operating Constraints & Thermal Realities
+## Operating Limits & Thermal Behavior
 
 ### 1. Continuous 12.5A Bench Testing
 The PUDGALA 300 was successfully tested on the bench at **12.5 A continuous** at ~24.9V, delivering **~312 W output power**:
-* **$I^2 R$ Thermal Rise:** Conduction loss scales quadratically ($P = I^2 R$). Increasing current from 10A to 12.5A increases resistive power dissipation by **$+56\%$**.
-* **Thermal Rise:** Under 12.5A continuous on an open test bench with still air, the board heats up substantially, with component temperatures quickly reaching $90^\circ\text{C}-100^\circ\text{C}$.
+* **Thermal Rise:** Resistive heating increases significantly (+56%) when stepping up from 10A to 12.5A. In open still air at 12.5A, the bare board components quickly reach 90°C–100°C.
 * **Cooling Requirement:** While the board handles 12.5A electrically, **active forced airflow or heatsink coupling is mandatory** for sustained operation above 10A.
 
-### 2. Cooling Modes & Recommendations
-1. **Natural Convection (Passive):** Suitable for loads up to **100W–120W continuous** (approx. 4A–5A).
-2. **Forced Air Cooling:** Rated for **250W–300W+ continuous** when a 24V cooling fan is connected to the onboard `+Fan / -Fan` test points.
-3. **Chassis / Heatsink Conduction:** The bottom layer has **no components** ("*Yes, there's nothing on this side*"). A 1.0 mm thermal pad placed between the bottom PCB ground plane and an aluminum enclosure allows sinking heat directly into external metalwork.
-4. **Protective Enclosure:** A custom 3D-printable / CNC enclosure STEP model with integrated fan mounting and heatsink interface will be uploaded to this repository soon.
+### 2. Cooling Options
+1. **Passive Air:** Suitable for continuous loads up to **100W–120W** (around 4A–5A).
+2. **Forced Air Cooling:** Full **250W–300W+ continuous** rating when a 24V cooling fan is connected to the onboard `+Fan / -Fan` solder pads.
+3. **Chassis / Heatsink Mounting:** The bottom side of the PCB has **no components** ("*Yes, there's nothing on this side*"). A 1.0 mm thermal silicone pad placed between the bottom ground plane and an aluminum enclosure or frame allows sinking heat directly into external metal.
+4. **Protective Enclosure:** A custom 3D-printable / CNC enclosure STEP model with fan mounting and heatsink interface will be uploaded to this repository soon.
 
 ---
 
-## 6-Layer PCB Stackup & Layout Engineering
+## 6-Layer PCB Stackup & Layout
 
-The PCB utilizes a tailored 6-layer FR4 stackup (1.6 mm thickness, 1 oz / 35 µm copper on all layers) engineered for low parasitic inductance, optimal thermal spreading, and electromagnetic compliance.
+The board uses a custom 6-layer FR4 stackup (1.6 mm thickness, 1 oz / 35 µm copper across all layers) optimized for low loop inductance and thermal dissipation.
 
 ```
 ┌────────────────────────────────────────────────────────┐ Layer 1 (F.Cu) - 35µm
-│  Components, High-di/dt Switching Loop, Gate Drives, AGND │
-├────────────────────────────────────────────────────────┤ Dielectric 1 (Prepreg) - 0.100mm
-│  SOLID GROUND PLANE (In1.Cu) - 35µm                    │ (Extremely tight RF return path)
-├────────────────────────────────────────────────────────┤ Dielectric 2 (Core) - 0.535mm
-│  GND / Aux Shielding (In2.Cu) - 35µm                   │
-├────────────────────────────────────────────────────────┤ Dielectric 3 (Prepreg) - 0.100mm
+│  Components, Switching Loop, Gate Drives, Analog Ground │
+├────────────────────────────────────────────────────────┤ Prepreg - 0.100mm
+│  SOLID GROUND PLANE (In1.Cu) - 35µm                    │ (Tight RF return path)
+├────────────────────────────────────────────────────────┤ Core - 0.535mm
+│  GND / Auxiliary Shielding (In2.Cu) - 35µm             │
+├────────────────────────────────────────────────────────┤ Prepreg - 0.100mm
 │  POWER PLANES: +BATT & +24V Distribution (In3.Cu) - 35µm│
-├────────────────────────────────────────────────────────┤ Dielectric 4 (Core) - 0.535mm
-│  SOLID GROUND PLANE (In4.Cu) - 35µm                    │ (Shielding & Thermal Conduction)
-├────────────────────────────────────────────────────────┤ Dielectric 5 (Prepreg) - 0.100mm
+├────────────────────────────────────────────────────────┤ Core - 0.535mm
+│  SOLID GROUND PLANE (In4.Cu) - 35µm                    │ (Shielding & Thermal Transfer)
+├────────────────────────────────────────────────────────┤ Prepreg - 0.100mm
 │  FLAT BOTTOM GROUND PLANE (B.Cu) - 35µm                │
 └────────────────────────────────────────────────────────┘ ("Yes, there's nothing on this side")
 ```
@@ -227,7 +217,7 @@ The PCB utilizes a tailored 6-layer FR4 stackup (1.6 mm thickness, 1 oz / 35 µm
 
 ## Bill of Materials (BOM)
 
-All components are standard, readily sourcable parts with matching **LCSC Part Numbers** for seamless turn-key assembly via JLCPCB, PCBWay, or other PCBA houses.
+All components are standard, readily sourcable parts with matching **LCSC Part Numbers** for turn-key assembly via JLCPCB, PCBWay, or other assembly houses.
 
 | Designator | Value / Part | Description | Package / Footprint | Qty | LCSC Part # |
 | :--- | :--- | :--- | :--- | :---: | :--- |
