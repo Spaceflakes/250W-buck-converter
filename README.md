@@ -23,7 +23,7 @@ The **PUDGALA 300** is an open-source, high-power-density synchronous buck conve
 The primary motivation for this project was powering high-power FPV drone battery chargers directly from repurposed **13S electric scooter (E-scooter) battery packs** in the field.
 
 * **The Problem:** 13S Li-ion battery packs swing from **39.0V** (empty) to **54.6V** (fully charged). However, most popular field chargers (such as ISDT, ToolkitRC, Hota, and SkyRC) have a maximum input voltage limit of **30.0V DC**. Connecting a 13S battery directly would instantly destroy the charger.
-* **The Solution:** The PUDGALA 300 steps down the 39V–54.6V input into a stable **24.88V** rail at up to **10A–12.5A (>300W)**. This allows pilots to rapidly parallel-charge multiple 4S and 6S drone packs in the field using salvaged e-mobility batteries.
+* **The Solution:** The PUDGALA 300 steps down the 39V–54.6V input into a stable **24.88V** rail at up to **10A–12.5A (>300W)**. This allows pilots to rapidly parallel-charge multiple 6S drone packs in the field using salvaged e-mobility batteries.
 
 ---
 
