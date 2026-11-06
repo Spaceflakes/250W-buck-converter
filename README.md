@@ -173,21 +173,21 @@ The PUDGALA 300 was successfully tested on the bench at **12.5 A continuous** at
 
 The board uses a custom 6-layer FR4 stackup (1.6 mm thickness, 1 oz / 35 µm copper across all layers) optimized for low loop inductance and thermal dissipation.
 
-```
-┌────────────────────────────────────────────────────────┐ Layer 1 (F.Cu) - 35µm
-│  Components, Switching Loop, Gate Drives, Analog Ground │
-├────────────────────────────────────────────────────────┤ Prepreg - 0.100mm
-│  SOLID GROUND PLANE (In1.Cu) - 35µm                    │ (Tight RF return path)
-├────────────────────────────────────────────────────────┤ Core - 0.535mm
-│  GND / Auxiliary Shielding (In2.Cu) - 35µm             │
-├────────────────────────────────────────────────────────┤ Prepreg - 0.100mm
-│  POWER PLANES: +BATT & +24V Distribution (In3.Cu) - 35µm│
-├────────────────────────────────────────────────────────┤ Core - 0.535mm
-│  SOLID GROUND PLANE (In4.Cu) - 35µm                    │ (Shielding & Thermal Transfer)
-├────────────────────────────────────────────────────────┤ Prepreg - 0.100mm
-│  FLAT BOTTOM GROUND PLANE (B.Cu) - 35µm                │
-└────────────────────────────────────────────────────────┘ ("Yes, there's nothing on this side")
-```
+| Layer | Type | Material | Thickness | Description & Key Nets |
+| :--- | :--- | :--- | :--- | :--- |
+| **Top (Layer 1)** | Copper | 1 oz Cu | 35 µm | Components, switching loop, gate drives, analog ground (`F.Cu`) |
+| *Dielectric 1* | Prepreg | FR4 | 100 µm (0.10 mm) | Ultra-thin dielectric for tight RF coupling to ground |
+| **Inner 1 (Layer 2)** | Copper | 1 oz Cu | 35 µm | **Solid Ground Plane** — immediate return path under L1 (`In1.Cu`) |
+| *Dielectric 2* | Core | FR4 | 535 µm (0.535 mm) | Internal structural core |
+| **Inner 2 (Layer 3)** | Copper | 1 oz Cu | 35 µm | Ground & auxiliary shielding plane (`In2.Cu`) |
+| *Dielectric 3* | Prepreg | FR4 | 100 µm (0.10 mm) | Prepreg isolation layer |
+| **Inner 3 (Layer 4)** | Copper | 1 oz Cu | 35 µm | **Power Planes** — +BATT input & +24V distribution (`In3.Cu`) |
+| *Dielectric 4* | Core | FR4 | 535 µm (0.535 mm) | Internal structural core |
+| **Inner 4 (Layer 5)** | Copper | 1 oz Cu | 35 µm | **Solid Ground Plane** — plane shielding & thermal spreading (`In4.Cu`) |
+| *Dielectric 5* | Prepreg | FR4 | 100 µm (0.10 mm) | Prepreg isolation layer |
+| **Bottom (Layer 6)** | Copper | 1 oz Cu | 35 µm | **Flat Ground Plane** — zero components, heatsink interface (`B.Cu`) |
+
+*Total Board Thickness: 1.6 mm*
 
 ---
 
